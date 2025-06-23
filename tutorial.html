@@ -1,0 +1,886 @@
+
+<!DOCTYPE html>
+
+
+<html lang="de" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Einführung: Retrieval-Augmented Generation (RAG) &#8212; RAG Tutorial: Retrieval-Augmented Generation von Grund auf</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=91fba89f"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="_static/translations.js?v=79cc9f76"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorial';</script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Google Colab Setup" href="colab-setup.html" />
+    <link rel="prev" title="Setup und Installation" href="setup.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="de"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">RAG Tutorial: Retrieval-Augmented Generation von Grund auf</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Suche" aria-label="Suche" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Suche</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup und Installation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="colab-setup.html">Google Colab Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="additional-resources.html">Weitere Ressourcen</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/lamalab-org/rag-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Quell-Repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Laden Sie diese Seite herunter">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/tutorial.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Quelldatei herunterladen"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="In PDF drucken"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Vollbildmodus"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Suche" aria-label="Suche" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Einführung: Retrieval-Augmented Generation (RAG)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Inhalt </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aufbau-eines-rag-systems">Aufbau eines RAG-Systems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ziel-des-notebooks">Ziel des Notebooks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#voraussetzungen">Voraussetzungen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-1-pdf-dokumente-einlesen">📄 Schritt 1: PDF-Dokumente einlesen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-2-text-in-chunks-zerlegen">✂️ Schritt 2: Text in Chunks zerlegen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-3-chunks-embedden">🔢 Schritt 3: Chunks embedden</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-4-erstellung-eines-vektorstores">🧠 Schritt 4: Erstellung eines Vektorstores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-5-retrieval-der-relevanten-textabschnitte">🔍 Schritt 5: Retrieval der relevanten Textabschnitte</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-6-nutzeranfrage-stellen-und-antwort-generieren">💬 Schritt 6: Nutzeranfrage stellen und Antwort generieren</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zusammenfassung">Zusammenfassung</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="einfuhrung-retrieval-augmented-generation-rag">
+<h1>Einführung: Retrieval-Augmented Generation (RAG)<a class="headerlink" href="#einfuhrung-retrieval-augmented-generation-rag" title="Link to this heading">#</a></h1>
+<p>Dieses Notebook demonstriert die Grundstruktur eines Retrieval-Augmented Generation (RAG) Systems.<br />
+RAG kombiniert die Stärken von Retrieval- und Generierungsmodellen, um präzise Antworten auf Fragen zu liefern, die auf spezifischen Dokumenten basieren.
+Retrieval-Modelle durchsuchen große Dokumentensammlungen, um relevante Informationen zu finden, während Generierungsmodelle diese Informationen nutzen, um kohärente Antworten zu formulieren.</p>
+<p>Praktisch kann ein solches System genutzt werden, um Fragen zu beantworten, die auf einem bestimmten Dokument basieren, ohne dass das zugrunde liegende Sprachmodell neu trainiert werden muss.
+RAG, mit einigen weiteren Tricks, ist damit die Grundlage für Systeme wie <a class="reference external" href="https://arxiv.org/abs/2409.13740">PaperQA</a> oder <a class="reference external" href="https://scholarqa.allen.ai/chat">ScholarQA</a> die Fragen basierend auf wissenschaftlichen Artikeln beantworten können.
+Da Retrieval verwendet wird, kann immer auch eine Referenz zu den Quellen gegeben werden, die für die Antwort verwendet wurden.</p>
+<section id="aufbau-eines-rag-systems">
+<h2>Aufbau eines RAG-Systems<a class="headerlink" href="#aufbau-eines-rag-systems" title="Link to this heading">#</a></h2>
+<p>Prinzipiell besteht ein RAG-System aus zwei Hauptkomponenten:</p>
+<ol class="arabic simple">
+<li><p><strong>Retrieval</strong>: Hierbei werden relevante Abschnitte aus einem Dokument oder einer Sammlung von Dokumenten abgerufen, die für die Beantwortung der gestellten Frage nützlich sein könnten. Hierfür werden Dokumente in kleine Abschnitte („Chunks“) unterteilt und in einem Vektor-Datenbankindex gespeichert.  Der Index wird erstellt, indem die Abschnitte in Vektoren umgewandelt werden, die dann in der Datenbank gespeichert werden. Wenn eine Frage gestellt wird, wird der Index durchsucht, um die relevantesten Abschnitte zu finden.</p></li>
+<li><p><strong>Generierung</strong>: Basierend auf den abgerufenen Informationen generiert ein Sprachmodell eine Antwort auf die gestellte Frage.</p></li>
+</ol>
+</section>
+<section id="ziel-des-notebooks">
+<h2>Ziel des Notebooks<a class="headerlink" href="#ziel-des-notebooks" title="Link to this heading">#</a></h2>
+<p>Fragen zu benutzerdefinierten Dokumenten beantworten – <strong>ohne das Modell neu zu trainieren</strong>.</p>
+</section>
+<section id="voraussetzungen">
+<h2>Voraussetzungen<a class="headerlink" href="#voraussetzungen" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Python 3.8 oder höher</p></li>
+<li><p>Ein Ordner mit PDF-Dokumenten, die du verwenden möchtest (z.B. <code class="docutils literal notranslate"><span class="pre">./data</span></code>)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Benötigten Pakete installieren ---</span>
+
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>-q<span class="w"> </span>pymupdf<span class="w">        </span>#<span class="w"> </span>Für<span class="w"> </span>PDF-Text-Extraktion
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>-q<span class="w"> </span>numpy<span class="w">          </span>#<span class="w"> </span>Für<span class="w"> </span>Cosine<span class="w"> </span>Similarity<span class="w"> </span><span class="p">&amp;</span><span class="w"> </span>Vektorberechnungen
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>-q<span class="w"> </span>litellm<span class="w">        </span>#<span class="w"> </span>Für<span class="w"> </span>Zugriff<span class="w"> </span>auf<span class="w"> </span>Embedding-<span class="w"> </span><span class="p">&amp;</span><span class="w"> </span>Sprachmodelle<span class="w"> </span>via<span class="w"> </span>API
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>-q<span class="w"> </span>langchain<span class="w">      </span>#<span class="w"> </span>Für<span class="w"> </span>die<span class="w"> </span>Verwaltung<span class="w"> </span>von<span class="w"> </span>Embeddings<span class="w"> </span>und<span class="w"> </span>Modellen
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Imports ---</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>                 
+<span class="kn">import</span><span class="w"> </span><span class="nn">fitz</span> <span class="c1"># PyMuPDF          </span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>        
+<span class="kn">import</span><span class="w"> </span><span class="nn">litellm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.text_splitter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>  
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Zunachst laden wir die Umgebungsvariablen aus der <code class="docutils literal notranslate"><span class="pre">.env</span></code>-Datei, die API-Schlüssel und andere Konfigurationen enthalten sollte.
+Es ist zu empfehlen, dass solche API-Schlüssel nicht direkt im Code stehen, sondern in einer <code class="docutils literal notranslate"><span class="pre">.env</span></code>-Datei gespeichert werden.</p>
+<p>Dafur erstellst du im gleichen Verzeichnis wie dieses Skript eine Datei mit dem Namen <code class="docutils literal notranslate"><span class="pre">.env</span></code> und fügst dort deine API-Schlüssel ein, z.B.:</p>
+<div class="highlight-plaintext notranslate"><div class="highlight"><pre><span></span>OPENAI_API_KEY=your_openai_api_key
+</pre></div>
+</div>
+<p>Alternativ kann auch Groq oder ein anderer Provider verwendet werden. Eine komplette Übersicht gibt es auf <a class="reference external" href="https://docs.litellm.ai/docs/providers">https://docs.litellm.ai/docs/providers</a>.<br />
+Cohere bietet kostenlose API Keys mit einer Token-Begrenzung an <a class="reference external" href="https://docs.cohere.com/v2/docs/rate-limits">https://docs.cohere.com/v2/docs/rate-limits</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">load_dotenv()</span></code> lädt die Umgebungsvariablen aus der <code class="docutils literal notranslate"><span class="pre">.env</span></code>-Datei, sodass wir sie im Code verwenden können.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">load_dotenv</span><span class="p">()</span>  <span class="c1"># Lädt Umgebungsvariablen aus .env-Datei</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>False
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="schritt-1-pdf-dokumente-einlesen">
+<h2>📄 Schritt 1: PDF-Dokumente einlesen<a class="headerlink" href="#schritt-1-pdf-dokumente-einlesen" title="Link to this heading">#</a></h2>
+<p>Zuerst werden PDF-Dateien mit dem Python-Paket <code class="docutils literal notranslate"><span class="pre">fitz</span></code> (PyMuPDF) in reinen Text umgewandelt. Dafür definieren wir eine Funktion <code class="docutils literal notranslate"><span class="pre">extract_text_from_pdfs</span></code>, die alle PDF-Dateien in einem angegebenen Verzeichnis liest und den Text extrahiert.
+Die Funktion ist unvollständig und muss noch implementiert werden.  Hinweise zum Implementieren der Funktion findest du in den Kommentaren im Code sowie in der <a class="reference external" href="https://pymupdf.readthedocs.io/en/latest/index.html">Dokumentation von <code class="docutils literal notranslate"><span class="pre">fitz</span></code> (PyMuPDF)</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">extract_text_from_pdf_folder</span><span class="p">(</span><span class="n">pdf_folder_path</span><span class="p">):</span>
+    <span class="n">all_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    
+    <span class="c1"># Über alle PDF-Dateien im Ordner iterieren</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pdf_folder_path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">):</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pdf_folder_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="c1"># TODO: Öffne die PDF-Datei mit fitz.open(file_path) als doc</span>
+            <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+                <span class="c1"># TODO: Verwende .get_text(), um Text zu extrahieren und zu all_text hinzuzufügen</span>
+                <span class="k">pass</span>
+    
+    <span class="k">return</span> <span class="n">all_text</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Nun können wir die Funktion zum Extrahieren von Text aus PDF-Dateien testen:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Aufruf der Extraktion ---</span>
+<span class="n">pdf_folder</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span>  <span class="c1"># TODO: Gib den Ordnerpfad mit den PDFs an</span>
+<span class="n">raw_text</span> <span class="o">=</span> <span class="n">extract_text_from_pdf_folder</span><span class="p">(</span><span class="n">pdf_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># --- Aufruf der Extraktion ---</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">pdf_folder</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span>  <span class="c1"># TODO: Gib den Ordnerpfad mit den PDFs an</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">raw_text</span> <span class="o">=</span> <span class="n">extract_text_from_pdf_folder</span><span class="p">(</span><span class="n">pdf_folder</span><span class="p">)</span>
+
+<span class="nn">Cell In[4], line 5,</span> in <span class="ni">extract_text_from_pdf_folder</span><span class="nt">(pdf_folder_path)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">all_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># Über alle PDF-Dateien im Ordner iterieren</span>
+<span class="ne">----&gt; </span><span class="mi">5</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pdf_folder_path</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>         <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pdf_folder_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;...&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Und uns den extrahierten Text anzeigen lassen</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">raw_text</span><span class="p">[</span><span class="mi">1000</span><span class="p">])</span> 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="schritt-2-text-in-chunks-zerlegen">
+<h2>✂️ Schritt 2: Text in Chunks zerlegen<a class="headerlink" href="#schritt-2-text-in-chunks-zerlegen" title="Link to this heading">#</a></h2>
+<p>Der extrahierte Text wird nun in kleinere, überlappende Abschnitte (<em>Chunks</em>) aufgeteilt.<br />
+Hierfur verwenden wir eine Methode die <code class="docutils literal notranslate"><span class="pre">RecursiveCharacterTextSplitter</span></code> genannt wird. Diese Methode teilt den Text in kleinere Abschnitte auf, die für die spätere Verarbeitung durch das Retrieval-Modell geeignet sind. Die Chunks werden so erstellt, dass sie eine maximale Länge haben und überlappende Teile enthalten, um sicherzustellen, dass wichtige Informationen nicht verloren gehen. Die Abschnitte werden hierbei erstellt indem der Text an einer definierten Liste von Trennzeichen (wie Absätzen oder Sätzen) aufgeteilt wird. Diese Liste wird durchgegangen bis der Text in kleinere Abschnitte zerlegt ist, die eine maximale Länge nicht überschreiten.
+Mehr Informationen dazu können in der <a class="reference external" href="https://python.langchain.com/docs/how_to/recursive_text_splitter/">LangChain Dokumentation</a> gefunden werden.</p>
+<p>Diese Einheiten können später effizient eingebettet und durchsucht werden.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Text in überlappende Chunks aufteilen ---</span>
+
+<span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>       <span class="c1"># TODO: Wähle sinnvolle Chunk-Größe</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="n">___</span>     <span class="c1"># TODO: Wähle Überlappung</span>
+<span class="p">)</span>
+
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">text_splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">()</span>  <span class="c1"># TODO: Gib den zu chunkenden Text ein</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span><span class="si">}</span><span class="s2"> Chunks erstellt.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="schritt-3-chunks-embedden">
+<h2>🔢 Schritt 3: Chunks embedden<a class="headerlink" href="#schritt-3-chunks-embedden" title="Link to this heading">#</a></h2>
+<p>Nun werden die erzeugten Chunks in numerische Vektoren (<em>Embeddings</em>) umgewandelt.<br />
+Diese Vektoren repräsentieren die semantische Bedeutung der Chunks und ermöglichen es, ähnliche Chunks zu finden. Texte mit ähnlicher Bedeutung werden in der Vektor-Datenbank nahe beieinander liegen.
+Text in Vektoren umzuwandeln, wird als „Embedding“ bezeichnet und ist der erste Schritt in Sprachmodellen, um Text in eine Form zu bringen, die von Computern verarbeitet werden kann. Hier verwenden wir die Embeddings allerdings auch um die Chunks in einer Vektor-Datenbank zu speichern, damit sie später für die Retrieval-Komponente des RAG-Systems verwendet werden können.</p>
+<p>Dies erfolgt mithilfe der OpenAI API über <code class="docutils literal notranslate"><span class="pre">LiteLLM</span></code>. Es können auch andere Embedding-Modelle verwendet werden, die in der Lage sind, Text in Vektoren umzuwandeln.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">embed_text_with_litellm</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;text-embedding-3-small&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embeds the given text using the LiteLLM API.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">litellm</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="nb">input</span><span class="o">=</span><span class="n">text</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Das können wir testen indem wir verschiedene Texte einbetten und die Vektoren vergleichen. Um  Vektoren zu vergleichen, können wir den Winkel zwischen ihnen berechnen. Ein kleiner Winkel bedeutet, dass die Vektoren ähnlich sind.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Berechnet die Cosine Similarity zwischen zwei Vektoren.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dot_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">)</span>
+    <span class="n">norm_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vec1</span><span class="p">)</span>
+    <span class="n">norm_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vec2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">norm_a</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">norm_b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    
+    <span class="k">return</span> <span class="n">dot_product</span> <span class="o">/</span> <span class="p">(</span><span class="n">norm_a</span> <span class="o">*</span> <span class="n">norm_b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">text_a</span> <span class="o">=</span> <span class="s2">&quot;Chemie&quot;</span>
+<span class="n">text_b</span> <span class="o">=</span> <span class="s2">&quot;Chemie ist die Wissenschaft von Stoffen und deren Umwandlungen.&quot;</span>
+<span class="n">text_c</span> <span class="o">=</span> <span class="s2">&quot;Mathematik ist die Wissenschaft von Zahlen und Formen.&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cosine_a_b</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">embed_text_with_litellm</span><span class="p">(</span><span class="n">text_a</span><span class="p">)),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">embed_text_with_litellm</span><span class="p">(</span><span class="n">text_b</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="n">cosine_a_c</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">embed_text_with_litellm</span><span class="p">(</span><span class="n">text_a</span><span class="p">)),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">embed_text_with_litellm</span><span class="p">(</span><span class="n">text_c</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cosine Similarity zwischen &#39;</span><span class="si">{</span><span class="n">text_a</span><span class="si">}</span><span class="s2">&#39; und &#39;</span><span class="si">{</span><span class="n">text_b</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">cosine_a_b</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cosine Similarity zwischen &#39;Chemie&#39; und &#39;Chemie ist die Wissenschaft von Stoffen und deren Umwandlungen.&#39;: 0.7127
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cosine Similarity zwischen &#39;</span><span class="si">{</span><span class="n">text_a</span><span class="si">}</span><span class="s2">&#39; und &#39;</span><span class="si">{</span><span class="n">text_c</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">cosine_a_c</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cosine Similarity zwischen &#39;Chemie&#39; und &#39;Mathematik ist die Wissenschaft von Zahlen und Formen.&#39;: 0.3313
+</pre></div>
+</div>
+</div>
+</div>
+<p>Nun können wir die Chunks in Embeddings umwandeln und die Cosine Similarity berechnen:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Beispielkonfiguration (OpenAI, austauschbar)</span>
+<span class="n">litellm_model</span> <span class="o">=</span> <span class="s2">&quot;openai/embedding-3-small&quot;</span>
+
+<span class="c1"># Liste von Embeddings vorbereiten</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+    <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">embed_text_with_litellm</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">litellm_model</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span><span class="si">}</span><span class="s2"> Embeddings erstellt.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="schritt-4-erstellung-eines-vektorstores">
+<h2>🧠 Schritt 4: Erstellung eines Vektorstores<a class="headerlink" href="#schritt-4-erstellung-eines-vektorstores" title="Link to this heading">#</a></h2>
+<p>Die Embeddings und ihre zugehörigen Textabschnitte werden in einem einfachen Vektorstore gespeichert.<br />
+Dazu erstellen wir eine <strong>Liste von Paaren</strong> bestehend aus:</p>
+<ul class="simple">
+<li><p>einem Embedding</p></li>
+<li><p>dem zugehörigen Textabschnitt</p></li>
+</ul>
+<p>➡️ Dies erlaubt später eine <strong>schnelle semantische Suche</strong>.</p>
+<p>Die <code class="docutils literal notranslate"><span class="pre">zip</span></code>-Funktion in Python kann verwendet werden, um zwei Listen zu kombinieren, sodass jedes Element der ersten Liste mit dem entsprechenden Element der zweiten Liste gepaart wird.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vectorstore</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">))</span> <span class="c1"># TODO: Embeddings + zugehörige Text Chunk definieren</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="schritt-5-retrieval-der-relevanten-textabschnitte">
+<h2>🔍 Schritt 5: Retrieval der relevanten Textabschnitte<a class="headerlink" href="#schritt-5-retrieval-der-relevanten-textabschnitte" title="Link to this heading">#</a></h2>
+<p>Um zu einer Nutzeranfrage passende Textstellen zu finden, berechnen wir die <strong>Cosine Similarity</strong><br />
+zwischen dem Embedding der Frage und allen gespeicherten Embeddings.</p>
+<p>Nun sollen die <strong>k ähnlichsten Chunks</strong> zur Nutzeranfrage (<code class="docutils literal notranslate"><span class="pre">query</span></code>) gefunden und zurückgegeben werden.</p>
+<p>Hierzu definieren wir die Funktion <code class="docutils literal notranslate"><span class="pre">retrieve_top_k</span></code>. Diese Funktion nimmt die Nutzeranfrage (<code class="docutils literal notranslate"><span class="pre">query</span></code>) und die Anzahl der gewünschten Ergebnisse (<code class="docutils literal notranslate"><span class="pre">k</span></code>) als Eingabeparameter. Sie berechnet die Cosine Similarity zwischen dem Embedding der Anfrage und den gespeicherten Embeddings und gibt die <code class="docutils literal notranslate"><span class="pre">k</span></code> ähnlichsten Chunks zurück.</p>
+<p>Die Funktion <code class="docutils literal notranslate"><span class="pre">retrieve_top_k</span></code> wird wie folgt implementiert:</p>
+<ol class="arabic simple">
+<li><p>Berechnung des Embeddings der Anfrage (<code class="docutils literal notranslate"><span class="pre">query_embedding</span></code>).</p></li>
+<li><p>Berechnung der Cosine Similarity zwischen dem <code class="docutils literal notranslate"><span class="pre">query_embedding</span></code> und allen im Vektorstore <code class="docutils literal notranslate"><span class="pre">vectorstore</span></code> gespeicherten Embeddings mittels <code class="docutils literal notranslate"><span class="pre">cosine_similarity</span></code>.</p></li>
+<li><p>Sortierung der Ergebnisse nach der Cosine Similarity in absteigender Reihenfolge. Die Cosine Similarity kann zwischen -1 und 1 liegen, wobei 1 die höchste Ähnlichkeit bedeutet. Deshalb sortieren wir die Ergebnisse in absteigender Reihenfolge.</p></li>
+<li><p>Rückgabe der <code class="docutils literal notranslate"><span class="pre">k</span></code> ähnlichsten Chunks und ihrer Cosine Similarity-Werte. Hierbei müssen wir darauf achten, dass in manchen Fällen <code class="docutils literal notranslate"><span class="pre">k</span></code> größer sein kann als die Anzahl der verfügbaren Chunks. In diesem Fall sollten wir nur die verfügbaren Chunks zurückgeben.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Ähnlichste Chunks zur Nutzerfrage finden ---</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">retrieve_top_k</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+    <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">embed_text_with_litellm</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">litellm_model</span><span class="p">))</span>
+
+    <span class="c1"># Ähnlichkeit mit allen gespeicherten Embeddings berechnen</span>
+    <span class="n">scored_chunks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">vectorstore</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">embedding</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span> <span class="c1"># TODO: Cosine Similarity korrekt aufrufen</span>
+        <span class="n">scored_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">score</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+
+    <span class="c1"># Chunks nach Score absteigend sortieren</span>
+    <span class="n">scored_chunks</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">___</span><span class="p">,</span>                      <span class="c1"># TODO: Liste der Scoring-Ergebnisse einsetzen</span>
+        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>       <span class="c1"># Sortiere nach dem ersten Element im Tupel = Score</span>
+        <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>              <span class="c1"># Höchste Scores zuerst</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Texte der Top-k Ergebnisse zurückgeben</span>
+    <span class="n">top_chunks</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">___</span><span class="p">))):</span>  <span class="c1"># TODO: Ersetze beide ___ mit der gewünschten Anzahl an Ergebnissen und der Länge der Liste scored_chunks</span>
+        <span class="n">top_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scored_chunks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>  
+        
+    <span class="k">return</span> <span class="n">top_chunks</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="schritt-6-nutzeranfrage-stellen-und-antwort-generieren">
+<h2>💬 Schritt 6: Nutzeranfrage stellen und Antwort generieren<a class="headerlink" href="#schritt-6-nutzeranfrage-stellen-und-antwort-generieren" title="Link to this heading">#</a></h2>
+<p>Die Nutzerfrage wird zunächst ebenfalls in ein Embedding umgewandelt.<br />
+Danach werden die semantisch ähnlichsten Chunks aus dem Vektorstore geladen.<br />
+Diese bilden den <strong>Kontext</strong>, den das Sprachmodell (z.B. GPT-4) verwendet, um eine Antwort zu generieren.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Nutzerfrage stellen ---</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span>  <span class="c1"># TODO: Gib hier deine Frage ein</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Nun können wir die Top-k Chunks abrufen:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">top_chunks</span> <span class="o">=</span> <span class="n">retrieve_top_k</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>  <span class="c1"># TODO: Argumente der Abfragefunktion definieren</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Um basierend auf der Literatur und Nutzerfrage eine Antwort zu generieren, kannst du ein Sprachmodell verwenden.
+Hiefur kombinieren wir die Top-k Chunks und senden zwei <code class="docutils literal notranslate"><span class="pre">Messages</span></code> an das Modell.
+Eine <code class="docutils literal notranslate"><span class="pre">Message</span></code>  ist der sogenannte <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Prompt</span></code>, der dem Modell Kontext gibt. Der <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Prompt</span></code> definiert die Rolle des Modells und gibt Anweisungen, wie es antworten soll. Er wird in der Regel einmalig zu Beginn der Konversation festgelegt und bleibt während der gesamten Sitzung unverändert.
+Die andere <code class="docutils literal notranslate"><span class="pre">Message</span></code> ist die <code class="docutils literal notranslate"><span class="pre">User</span> <span class="pre">Message</span></code>, die die eigentliche Nutzerfrage enthält. In dieser <code class="docutils literal notranslate"><span class="pre">Message</span></code> wird das Modell aufgefordert, eine Antwort auf die gestellte Frage zu generieren. Hierfür wird der Text der Top-k Chunks als Kontext hinzugefügt, um dem Modell relevante Informationen zu liefern.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Prompt vorbereiten ---</span>
+<span class="n">retrieved_context</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">top_chunks</span><span class="p">)</span>
+
+<span class="c1"># --- Prompt + Frage an Sprachmodell übergeben (z.B. GPT-4 via LiteLLM) ---</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">litellm</span><span class="o">.</span><span class="n">completion</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4&quot;</span><span class="p">,</span>  <span class="c1"># TODO: Modell ggf. anpassen</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Beantworte Fragen basierend auf den folgenden Textauszügen.&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Textauszüge: </span><span class="si">{</span><span class="n">___</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">Frage: </span><span class="si">{</span><span class="n">___</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span> <span class="c1"># TODO: Ähnliche Textauszüge und Nutzteranfrage definieren</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># --- Antwort anzeigen ---</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Antwort:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="zusammenfassung">
+<h2>Zusammenfassung<a class="headerlink" href="#zusammenfassung" title="Link to this heading">#</a></h2>
+<p>In diesem Tutorial hast du Schritt für Schritt ein einfaches Retrieval-Augmented Generation (RAG) System aufgebaut.</p>
+<p>Du hast gelernt:</p>
+<ul class="simple">
+<li><p>wie man Dokumente in Text umwandelt,</p></li>
+<li><p>wie man diesen Text in verarbeitbare Chunks aufteilt,</p></li>
+<li><p>wie man eigene Embeddings erzeugt,</p></li>
+<li><p>und wie man eine semantische Suche selbst implementiert.</p></li>
+</ul>
+<p>Anschließend konntest du mit Hilfe eines Sprachmodells Fragen zu beliebigen Dokumenten beantworten.</p>
+<p>🔧 Dieses Grundgerüst lässt sich nun beliebig erweitern – z.B. mit:</p>
+<ul class="simple">
+<li><p>Vektor-Datenbanken wie FAISS, Chroma oder Weaviate</p></li>
+<li><p>lokalen Sprachmodellen (z.B. über Ollama, Hugging Face)</p></li>
+<li><p>anderen Datenquellen (z.B. HTML, CSV, Notizen, Mails)</p></li>
+</ul>
+<p>In der Praxis wird RAG häufig in Kombination mit anderen Techniken verwendet, um die Präzision und Relevanz der Antworten zu verbessern.
+Sehr hilfreich kann es sein das Sprachmodell mehrmals aufzurufen: zum Beispiel um viele Chunks zusammenzufassen und die Relevanz der Chunks zu bewerten, bevor die finale Antwort generiert wird.
+Sehr oft wird auch die Suche in Vektor-Datenbanken mit einer „klassichen“ Textsuche kombiniert, um die Relevanz der Ergebnisse zu erhöhen.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="setup.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">zurück</p>
+        <p class="prev-next-title">Setup und Installation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="colab-setup.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">weiter</p>
+        <p class="prev-next-title">Google Colab Setup</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Inhalt
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aufbau-eines-rag-systems">Aufbau eines RAG-Systems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ziel-des-notebooks">Ziel des Notebooks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#voraussetzungen">Voraussetzungen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-1-pdf-dokumente-einlesen">📄 Schritt 1: PDF-Dokumente einlesen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-2-text-in-chunks-zerlegen">✂️ Schritt 2: Text in Chunks zerlegen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-3-chunks-embedden">🔢 Schritt 3: Chunks embedden</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-4-erstellung-eines-vektorstores">🧠 Schritt 4: Erstellung eines Vektorstores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-5-retrieval-der-relevanten-textabschnitte">🔍 Schritt 5: Retrieval der relevanten Textabschnitte</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schritt-6-nutzeranfrage-stellen-und-antwort-generieren">💬 Schritt 6: Nutzeranfrage stellen und Antwort generieren</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zusammenfassung">Zusammenfassung</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Durch Mara Schilling-Wilhelmi und Kevin Maik Jablonka (LamaLab)
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, LamaLab (lamalab.org).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
