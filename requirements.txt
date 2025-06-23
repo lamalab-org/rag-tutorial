@@ -9,6 +9,8 @@ python-dotenv
 jupyter-book
 matplotlib
 jupytext
+sphinx-copybutton
+sphinx-inline-tabs
 
 # Additional utilities
 requests

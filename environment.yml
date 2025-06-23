@@ -14,5 +14,7 @@ dependencies:
     - jupyter-book
     - matplotlib
     - jupytext
+    - sphinx-copybutton
+    - sphinx-inline-tabs
     - requests
     - tqdm
