@@ -1,0 +1,14 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: index
+chapters:
+- file: setup
+  title: "Setup und Installation"
+- file: tutorial
+  title: "RAG Tutorial"
+- file: colab-setup
+  title: "Google Colab Setup"
+- file: additional-resources
+  title: "Weitere Ressourcen"

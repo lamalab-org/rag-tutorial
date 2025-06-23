@@ -1,0 +1,20 @@
+name: rag-tutorial
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - pymupdf
+    - numpy
+    - litellm
+    - langchain
+    - python-dotenv
+    - jupyter-book
+    - matplotlib
+    - jupytext
+    - sphinx-copybutton
+    - sphinx-inline-tabs
+    - requests
+    - tqdm
