@@ -1,0 +1,52 @@
+# Jupyter Book Configuration File
+
+title: "RAG Tutorial: Retrieval-Augmented Generation von Grund auf"
+author: "Mara Schilling-Wilhelmi und Kevin Maik Jablonka (LamaLab)"
+copyright: "2025, LamaLab (lamalab.org)"
+logo: "static/images/favicon.ico"
+
+# Force re-execution of notebooks on each build
+execute:
+  execute_notebooks: force
+
+# Define the left-hand sidebar
+html:
+  favicon: "static/images/favicon.ico"
+  home_page_in_navbar: false
+  use_repository_button: true
+  use_issues_button: true
+  use_edit_page_button: true
+  use_download_button: true
+  use_fullscreen_button: true
+  google_analytics_id: ""
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/lamalab-org/rag-tutorial
+  path_to_book: ""
+  branch: master
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+
+# Define the left-hand sidebar
+format: jb-book
+root: index
+
+# Additional Sphinx extensions
+sphinx:
+  config:
+    language: de
+    html_theme_options:
+      show_navbar_depth: 2
+      repository_url: https://github.com/lamalab-org/rag-tutorial
+      use_repository_button: true
+  extra_extensions:
+    - sphinx_copybutton
+    - sphinx_inline_tabs
+
+# Latex configuration
+latex:
+  latex_documents:
+    targetname: rag-tutorial.tex

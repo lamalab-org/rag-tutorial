@@ -1,0 +1,15 @@
+# Core RAG Tutorial Dependencies
+pymupdf
+numpy
+litellm
+langchain
+python-dotenv
+
+# Jupyter Book Dependencies
+jupyter-book
+matplotlib
+jupytext
+
+# Additional utilities
+requests
+tqdm
